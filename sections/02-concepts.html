@@ -1,24 +1,60 @@
-      <h2>2. Formalization & Mathematical Foundations</h2>
-      <p>Let $D_0 = \{(x_i, y_i)\}_{i=1}^N$ be the raw dataset. A sequence of dataset transformations $\mathcal{T} = \{T_1, T_2, \dots, T_k\}$ produces the final processed training set $D_{\text{train}}$ via composition:</p>
+<h2>...Data provenance concepts...</h2>
 
-      <!-- Display Math Equation -->
-      $$D_{\text{train}} = (T_k \circ T_{k-1} \circ \dots \circ T_1)(D_0)$$
+<p>
+    There are several forms of data provenance that capture complementary aspects of how data is produced and consumed at different levels of granularity. 
+    This work focuses on tuple-level provenance, the most fine-grained form of provenance, which identifies the source records that contributed to each output tuple and 
+    describes how and why they contributed to its creation. 
+    Such fine-grained provenance is particularly valuable for Explainable AI, as it enables users to trace the origin of the data used to train or execute a model, 
+    thereby improving the transparency, explainability, and trustworthiness of its predictions.
+</p>
 
-      <p>The parameter state $\hat{\theta}$ of the model $f_\theta$ is computed by minimizing empirical risk over $D_{\text{train}}$:</p>
+<p>
+    A provenance semiring is an algebraic structure $( \mathbb{K}, +, \cdot \, ,   0, 1)$, where $\mathbb{K}$ denotes a set of provenance tokens, 
+    $+$ is a commutative and associative operator with identity  \( 0 \), and $\cdot$ is a commutative and associative operator  with identity  \( 1 \)  
+    distributive over $+$ [REFS]. 
+    The semiring addition operator (+) represents alternative derivations of a tuple, while the multiplication operator (·) represents joint 
+    participation of tuples in the same derivation.
+    These algebraic annotations can be combined and propagated through the query evaluation process according to the semantics of the relational algebra Selection, Projection, Join and 
+    Union operators, while preserving the semantics of the original query.
+    Thus, the provenance of each output tuple can be expressed as a provenance polynomial that compactly encodes all possible derivations leading to that result.     
+</p>
 
-      $$\hat{\theta} = \arg\min_{\theta \in \Theta} \frac{1}{|D_{\text{train}}|} \sum_{(x, y) \in D_{\text{train}}} \mathcal{L}(f_\theta(x), y)$$
+<div class="example-box">
+  <span class="example-label">Example 1: Provenance Annotation</span>
+  <code>josé manuel matos moreira</code>
+  <pre><code>josé manuel matos moreira</code></pre>
+  <code>josé manuel matos moreira</code>
+    <p>
+        For instance, consider...
+    </p>
 
-      <h3>Influence Functions for Data Lineage</h3>
-      <p>To quantify the influence of an individual training point $z_z = (x_z, y_z)$ on a query prediction $f_{\hat{\theta}}(x_{\text{test}})$, we use the influence function $\mathcal{I}_{\text{up, loss}}(z_z, z_{\text{test}})$:</p>
+</div>
 
-      $$\mathcal{I}_{\text{up, loss}}(z_z, z_{\text{test}}) = -\nabla_\theta \mathcal{L}(z_{\text{test}}, \hat{\theta})^T H_{\hat{\theta}}^{-1} \nabla_\theta \mathcal{L}(z_z, \hat{\theta})$$
+<p>
+    Aggregation queries require a richer provenance model because the result depends not only on which tuples contributed to the computation, 
+    but also on the values they contributed.
 
-      <p>where $H_{\hat{\theta}} = \frac{1}{N} \sum_{i=1}^N \nabla_\theta^2 \mathcal{L}(z_i, \hat{\theta})$ represents the Hessian matrix of the empirical risk.</p>
+    To address this limitation, provenance semirings are extended by introducing a semimodule structure defined over a semiring and a monoid ($K \otimes M$), 
+    where $K$ is a commutative semiring and $M$ is a commutative monoid representing the aggregation domain. 
+    For instance, the SUM aggregation  is defined over the commutative monoid (R,+,0), where R is the set of real numbers, + is the addition operation and 
+    0 is its identity element. 
 
-      <div class="media-container">
-        <video autoplay loop muted playsinline>
-          <source src="pipeline-demo.mp4" type="video/mp4">
-          Your browser does not support video playback.
-        </video>
-        <div class="media-caption">Figure 1: Data lineage graph tracking loss derivatives back to raw dataset batches.</div>
-      </div>
+    This extension preserves both the computed value and the contribution of every participating tuple, enabling understanding not only which records 
+    contributed to the derivation of a data item but also how strongly they influenced aggregated features.
+</p>
+
+<p>
+    For instance ...
+</p>
+
+<p>
+  Data provenance can addresses this gap by acting as an audit trail that documents the complete lifecycle of data from origin to consumption. 
+  Frameworks like the W3C PROV data model formalize these relationships by linking Entities (data artifacts), Activities (processing steps), and Agents (systems or users), 
+  while workflow provenance tools capture the exact execution environments of machine learning pipelines. 
+  Depending on the application, provenance can be tracked at varying levels of granularity—ranging from coarse-grained dataset lineage to fine-grained row- and 
+  cell-level tracking—revealing not just <em>which</em> features drove an AI decision, but <em>why</em> those features took those values in the first place.
+</p>
+      
+<p>
+    The theoretical foundations were implemented... dataprov, provSQL...
+</p>

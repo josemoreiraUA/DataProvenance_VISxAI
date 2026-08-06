@@ -6,19 +6,20 @@ class IncludeHTML extends HTMLElement {
     try {
       const res = await fetch(src);
       if (!res.ok) {
-        throw new Error(`Status ${res.status}: Could not load ${src}`);
+        throw new Error(`HTTP ${res.status}: Failed to fetch ${src}`);
       }
       
-      // Inject HTML content
+      // Inject content
       this.innerHTML = await res.text();
 
-      // Safely re-render MathJax after content is inserted
+      // Trigger MathJax re-render if present
       if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
-        MathJax.typesetPromise([this]).catch(err => console.error('MathJax error:', err));
+        MathJax.typesetPromise([this]).catch(err => console.error(err));
       }
     } catch (err) {
       console.error('IncludeHTML Error:', err);
-      this.innerHTML = `<p style="color: #dc2626; font-size: 0.85rem;">Failed to load snippet: ${src}</p>`;
+      // Temporary visible error on screen for debugging:
+      this.innerHTML = `<p style="color: red; font-weight: bold;">[Failed to load: ${src}]</p>`;
     }
   }
 }
