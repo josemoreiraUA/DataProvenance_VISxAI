@@ -5,46 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Provenance for Explainability in AI</title>
   
-  <!-- Fonts -->
+  <!-- Fonts & CSS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="styles/style.css">
 
-  <!-- 1. MathJax Configuration Script -->
-  <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\[', '\\]']],
-        processEscapes: true
-      },
-      options: {
-        ignoreHtmlClass: 'tex2jax_ignore',
-        processHtmlClass: 'tex2jax_process'
-      }
-    };
-  </script>
-  <!-- 2. MathJax Core Library CDN -->
+  <!-- External JS Scripts -->
+  <script src="javascript/include-component.js" defer></script>
+  <script src="javascript/demo.js" defer></script>
+  <script src="javascript/latex-math.js"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 </head>
 <body>
 
-  <!-- Academic Research Paper Title Header -->
+  <!-- Academic Title / Paper Header -->
   <header class="hero-header">
     <div class="hero-container">
-      <span class="paper-badge">IEEE VIS 2026, VISxAI Workshop</span>
+      <span class="paper-badge">Interactive Research & Tutorial</span>
       <h1 class="hero-title">Data Provenance for Explainability in AI</h1>
       
       <div class="authors-list">
-        <a href="#">José Moreira</a><sup>1</sup>, 
-        <a href="#">Paulo Pintor</a><sup>1</sup>, 
-        <a href="#">Rogério Costa</a><sup>2</sup>
+        <a href="#">Jane Doe</a><sup>1</sup>, 
+        <a href="#">John Smith</a><sup>1,2</sup>, 
+        <a href="#">Alice Johnson</a><sup>2</sup>
       </div>
       
       <div class="affiliations">
-        <sup>1 </sup>IEETA, University of Aveiro, Portugal; &nbsp; &nbsp;  <sup>2 </sup>University of Coimbra, Portugal
+        <sup>1</sup>AI Research Institute &nbsp;&bull;&nbsp; <sup>2</sup>Department of Computer Science, University
       </div>
 
       <div class="action-buttons">
@@ -64,71 +53,20 @@
     </div>
   </header>
 
-  <!-- Main Content Container with Desktop Margins -->
-    <script>
-    class IncludeHTML extends HTMLElement {
-        async connectedCallback() {
-        const src = this.getAttribute('src');
-        if (!src) return;
-
-        try {
-            const res = await fetch(src);
-            if (!res.ok) {
-            throw new Error(`Status ${res.status}: Could not load ${src}`);
-            }
-            
-            // Inject HTML
-            this.innerHTML = await res.text();
-
-            // Safely re-render MathJax after content is inserted
-            if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
-            MathJax.typesetPromise([this]).catch(err => console.error('MathJax error:', err));
-            }
-        } catch (err) {
-            console.error('IncludeHTML Error:', err);
-            this.innerHTML = `<p style="color: red; font-size: 0.85rem;">Failed to load snippet: ${src}</p>`;
-        }
-        }
-    }
-
-    customElements.define('include-html', IncludeHTML);
-    </script>
-    
+  <!-- Main Section Wrapper -->
   <main class="main-wrapper">
-    
+
     <!-- Section 1 -->
     <section id="introduction">
-        <include-html src="sections/01-introduction.html"></include-html>    
+      <include-html src="sections/01-introduction.html"></include-html>
     </section>
-    <!-- Section 2: Mathematical Foundations -->
+
+    <!-- Section 2 -->
     <section id="concepts">
-      <h2>2. Formalization & Mathematical Foundations</h2>
-      <p>Let $D_0 = \{(x_i, y_i)\}_{i=1}^N$ be the raw dataset. A sequence of dataset transformations $\mathcal{T} = \{T_1, T_2, \dots, T_k\}$ produces the final processed training set $D_{\text{train}}$ via composition:</p>
-
-      <!-- Display Math Equation -->
-      $$D_{\text{train}} = (T_k \circ T_{k-1} \circ \dots \circ T_1)(D_0)$$
-
-      <p>The parameter state $\hat{\theta}$ of the model $f_\theta$ is computed by minimizing empirical risk over $D_{\text{train}}$:</p>
-
-      $$\hat{\theta} = \arg\min_{\theta \in \Theta} \frac{1}{|D_{\text{train}}|} \sum_{(x, y) \in D_{\text{train}}} \mathcal{L}(f_\theta(x), y)$$
-
-      <h3>Influence Functions for Data Lineage</h3>
-      <p>To quantify the influence of an individual training point $z_z = (x_z, y_z)$ on a query prediction $f_{\hat{\theta}}(x_{\text{test}})$, we use the influence function $\mathcal{I}_{\text{up, loss}}(z_z, z_{\text{test}})$:</p>
-
-      $$\mathcal{I}_{\text{up, loss}}(z_z, z_{\text{test}}) = -\nabla_\theta \mathcal{L}(z_{\text{test}}, \hat{\theta})^T H_{\hat{\theta}}^{-1} \nabla_\theta \mathcal{L}(z_z, \hat{\theta})$$
-
-      <p>where $H_{\hat{\theta}} = \frac{1}{N} \sum_{i=1}^N \nabla_\theta^2 \mathcal{L}(z_i, \hat{\theta})$ represents the Hessian matrix of the empirical risk.</p>
-
-      <div class="media-container">
-        <video autoplay loop muted playsinline>
-          <source src="pipeline-demo.mp4" type="video/mp4">
-          Your browser does not support video playback.
-        </video>
-        <div class="media-caption">Figure 1: Data lineage graph tracking loss derivatives back to raw dataset batches.</div>
-      </div>
+      <include-html src="sections/02-concepts.html"></include-html>
     </section>
 
-    <!-- Section 3: Interactive Visualizer -->
+    <!-- Section 3: Interactive Visualizer Demo -->
     <section id="demo">
       <h2>3. Interactive Provenance Explorer</h2>
       <p>Click below to inspect how individual outputs map directly to their source dataset batch and transformation rules:</p>
@@ -163,45 +101,10 @@
 
     <!-- Section 4 -->
     <section id="references">
-      <h2>4. Acknowledgements & References</h2>
-      <p>Supported by the AI Governance and Transparency Initiative.</p>
-
-      <ol class="references-list">
-        <li>Herschel, M., et al. (2017). <em>A survey on provenance: What for? What form? How?</em> VLDB Journal.</li>
-        <li>Koh, P. W., & Liang, P. (2017). <em>Understanding black-box predictions via influence functions.</em> ICML.</li>
-      </ol>
+      <include-html src="sections/04-references.html"></include-html>
     </section>
 
   </main>
-
-  <script>
-    const samples = {
-      sample1: {
-        pred: "Low Risk (89%)",
-        trans: "MinMax Scaler v1.2",
-        source: "Batch_2024_Q1.csv",
-        log: "LINEAGE TRACE:\n↳ Origin: Primary Credit API Feed\n↳ Ingested: 2024-01-15\n↳ Preprocessing: Null values imputed using median"
-      },
-      sample2: {
-        pred: "Flagged (Review)",
-        trans: "Zero-Fill Drop Rule",
-        source: "Batch_2023_Legacy.csv",
-        log: "LINEAGE TRACE:\n↳ Origin: Legacy Portal\n↳ Ingested: 2023-09-10\n↳ Preprocessing: Anomaly flag applied during pipeline ingestion"
-      }
-    };
-
-    function updateSample(key, btn) {
-      document.querySelectorAll('.controls .btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      const data = samples[key];
-      document.getElementById('val-pred').textContent = data.pred;
-      document.getElementById('val-trans').textContent = data.trans;
-      document.getElementById('val-source').textContent = data.source;
-      document.getElementById('val-log').textContent = data.log;
-    }
-  </script>
-
 
 </body>
 </html>
