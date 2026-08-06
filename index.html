@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Provenance for Explainability in AI</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles/style.css">
+
+  <!-- 1. MathJax Configuration Script -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script>
+  <!-- 2. MathJax Core Library CDN -->
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+  <!-- Academic Research Paper Title Header -->
+  <header class="hero-header">
+    <div class="hero-container">
+      <span class="paper-badge">IEEE VIS 2026, VISxAI Workshop</span>
+      <h1 class="hero-title">Data Provenance for Explainability in AI</h1>
+      
+      <div class="authors-list">
+        <a href="#">José Moreira</a><sup>1</sup>, 
+        <a href="#">Paulo Pintor</a><sup>1</sup>, 
+        <a href="#">Rogério Costa</a><sup>2</sup>
+      </div>
+      
+      <div class="affiliations">
+        <sup>1 </sup>IEETA, University of Aveiro, Portugal; &nbsp; &nbsp;  <sup>2 </sup>University of Coimbra, Portugal
+      </div>
+
+      <div class="action-buttons">
+        <a href="#demo" class="action-btn">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10.804 8 5 4.633v6.734zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696z"/></svg>
+          Interactive Demo
+        </a>
+        <a href="#" class="action-btn secondary">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg>
+          Read Paper (PDF)
+        </a>
+        <a href="#" class="action-btn secondary">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          Source Code
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container with Desktop Margins -->
+    <script>
+    class IncludeHTML extends HTMLElement {
+        async connectedCallback() {
+        const src = this.getAttribute('src');
+        if (!src) return;
+
+        try {
+            const res = await fetch(src);
+            if (!res.ok) {
+            throw new Error(`Status ${res.status}: Could not load ${src}`);
+            }
+            
+            // Inject HTML
+            this.innerHTML = await res.text();
+
+            // Safely re-render MathJax after content is inserted
+            if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+            MathJax.typesetPromise([this]).catch(err => console.error('MathJax error:', err));
+            }
+        } catch (err) {
+            console.error('IncludeHTML Error:', err);
+            this.innerHTML = `<p style="color: red; font-size: 0.85rem;">Failed to load snippet: ${src}</p>`;
+        }
+        }
+    }
+
+    customElements.define('include-html', IncludeHTML);
+    </script>
+    
+  <main class="main-wrapper">
+    
+    <!-- Section 1 -->
+    <section id="introduction">
+        <include-html src="sections/01-introduction.html"></include-html>    
+    </section>
+    <!-- Section 2: Mathematical Foundations -->
+    <section id="concepts">
+      <h2>2. Formalization & Mathematical Foundations</h2>
+      <p>Let $D_0 = \{(x_i, y_i)\}_{i=1}^N$ be the raw dataset. A sequence of dataset transformations $\mathcal{T} = \{T_1, T_2, \dots, T_k\}$ produces the final processed training set $D_{\text{train}}$ via composition:</p>
+
+      <!-- Display Math Equation -->
+      $$D_{\text{train}} = (T_k \circ T_{k-1} \circ \dots \circ T_1)(D_0)$$
+
+      <p>The parameter state $\hat{\theta}$ of the model $f_\theta$ is computed by minimizing empirical risk over $D_{\text{train}}$:</p>
+
+      $$\hat{\theta} = \arg\min_{\theta \in \Theta} \frac{1}{|D_{\text{train}}|} \sum_{(x, y) \in D_{\text{train}}} \mathcal{L}(f_\theta(x), y)$$
+
+      <h3>Influence Functions for Data Lineage</h3>
+      <p>To quantify the influence of an individual training point $z_z = (x_z, y_z)$ on a query prediction $f_{\hat{\theta}}(x_{\text{test}})$, we use the influence function $\mathcal{I}_{\text{up, loss}}(z_z, z_{\text{test}})$:</p>
+
+      $$\mathcal{I}_{\text{up, loss}}(z_z, z_{\text{test}}) = -\nabla_\theta \mathcal{L}(z_{\text{test}}, \hat{\theta})^T H_{\hat{\theta}}^{-1} \nabla_\theta \mathcal{L}(z_z, \hat{\theta})$$
+
+      <p>where $H_{\hat{\theta}} = \frac{1}{N} \sum_{i=1}^N \nabla_\theta^2 \mathcal{L}(z_i, \hat{\theta})$ represents the Hessian matrix of the empirical risk.</p>
+
+      <div class="media-container">
+        <video autoplay loop muted playsinline>
+          <source src="pipeline-demo.mp4" type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+        <div class="media-caption">Figure 1: Data lineage graph tracking loss derivatives back to raw dataset batches.</div>
+      </div>
+    </section>
+
+    <!-- Section 3: Interactive Visualizer -->
+    <section id="demo">
+      <h2>3. Interactive Provenance Explorer</h2>
+      <p>Click below to inspect how individual outputs map directly to their source dataset batch and transformation rules:</p>
+
+      <div class="interactive-card">
+        <div class="controls">
+          <button class="btn active" onclick="updateSample('sample1', this)">Sample #104 (Approved)</button>
+          <button class="btn" onclick="updateSample('sample2', this)">Sample #209 (Flagged)</button>
+        </div>
+
+        <div class="pipeline-grid">
+          <div class="pipeline-step">
+            <div class="step-title">Prediction</div>
+            <div class="step-value" id="val-pred">Low Risk (89%)</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-title">Transformation</div>
+            <div class="step-value" id="val-trans">MinMax Scaler v1.2</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-title">Source Batch</div>
+            <div class="step-value" id="val-source">Batch_2024_Q1.csv</div>
+          </div>
+        </div>
+
+        <div class="provenance-box" id="val-log">LINEAGE TRACE:
+↳ Origin: Primary Credit API Feed
+↳ Ingested: 2024-01-15
+↳ Preprocessing: Null values imputed using median</div>
+      </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section id="references">
+      <h2>4. Acknowledgements & References</h2>
+      <p>Supported by the AI Governance and Transparency Initiative.</p>
+
+      <ol class="references-list">
+        <li>Herschel, M., et al. (2017). <em>A survey on provenance: What for? What form? How?</em> VLDB Journal.</li>
+        <li>Koh, P. W., & Liang, P. (2017). <em>Understanding black-box predictions via influence functions.</em> ICML.</li>
+      </ol>
+    </section>
+
+  </main>
+
+  <script>
+    const samples = {
+      sample1: {
+        pred: "Low Risk (89%)",
+        trans: "MinMax Scaler v1.2",
+        source: "Batch_2024_Q1.csv",
+        log: "LINEAGE TRACE:\n↳ Origin: Primary Credit API Feed\n↳ Ingested: 2024-01-15\n↳ Preprocessing: Null values imputed using median"
+      },
+      sample2: {
+        pred: "Flagged (Review)",
+        trans: "Zero-Fill Drop Rule",
+        source: "Batch_2023_Legacy.csv",
+        log: "LINEAGE TRACE:\n↳ Origin: Legacy Portal\n↳ Ingested: 2023-09-10\n↳ Preprocessing: Anomaly flag applied during pipeline ingestion"
+      }
+    };
+
+    function updateSample(key, btn) {
+      document.querySelectorAll('.controls .btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const data = samples[key];
+      document.getElementById('val-pred').textContent = data.pred;
+      document.getElementById('val-trans').textContent = data.trans;
+      document.getElementById('val-source').textContent = data.source;
+      document.getElementById('val-log').textContent = data.log;
+    }
+  </script>
+
+
+</body>
+</html>
