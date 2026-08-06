@@ -1,0 +1,24 @@
+      <h2>2. Formalization & Mathematical Foundations</h2>
+      <p>Let $D_0 = \{(x_i, y_i)\}_{i=1}^N$ be the raw dataset. A sequence of dataset transformations $\mathcal{T} = \{T_1, T_2, \dots, T_k\}$ produces the final processed training set $D_{\text{train}}$ via composition:</p>
+
+      <!-- Display Math Equation -->
+      $$D_{\text{train}} = (T_k \circ T_{k-1} \circ \dots \circ T_1)(D_0)$$
+
+      <p>The parameter state $\hat{\theta}$ of the model $f_\theta$ is computed by minimizing empirical risk over $D_{\text{train}}$:</p>
+
+      $$\hat{\theta} = \arg\min_{\theta \in \Theta} \frac{1}{|D_{\text{train}}|} \sum_{(x, y) \in D_{\text{train}}} \mathcal{L}(f_\theta(x), y)$$
+
+      <h3>Influence Functions for Data Lineage</h3>
+      <p>To quantify the influence of an individual training point $z_z = (x_z, y_z)$ on a query prediction $f_{\hat{\theta}}(x_{\text{test}})$, we use the influence function $\mathcal{I}_{\text{up, loss}}(z_z, z_{\text{test}})$:</p>
+
+      $$\mathcal{I}_{\text{up, loss}}(z_z, z_{\text{test}}) = -\nabla_\theta \mathcal{L}(z_{\text{test}}, \hat{\theta})^T H_{\hat{\theta}}^{-1} \nabla_\theta \mathcal{L}(z_z, \hat{\theta})$$
+
+      <p>where $H_{\hat{\theta}} = \frac{1}{N} \sum_{i=1}^N \nabla_\theta^2 \mathcal{L}(z_i, \hat{\theta})$ represents the Hessian matrix of the empirical risk.</p>
+
+      <div class="media-container">
+        <video autoplay loop muted playsinline>
+          <source src="pipeline-demo.mp4" type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+        <div class="media-caption">Figure 1: Data lineage graph tracking loss derivatives back to raw dataset batches.</div>
+      </div>
