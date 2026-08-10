@@ -398,3 +398,192 @@ mjx-container[jax="CHTML"][display="true"] {
     justify-content: center;
   }
 }
+
+
+
+
+
+
+
+
+
+
+/* Container to establish a clean block context */
+.wrapped-content {
+  margin: 2rem 0;
+  line-height: 1.6;
+  color: #334155;
+}
+
+/* Float styling for media */
+.float-media {
+  width: 55%; /* Adjust width of the figure relative to text area */
+  max-width: 500px;
+}
+
+/* Media element constraints */
+.float-media img,
+.float-media video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+}
+
+/* Float Left (Annex 1) */
+.float-left {
+  float: left;
+  margin-right: 1.5rem; /* Space between figure and wrapping text on the right */
+  margin-bottom: 0.75rem; /* Space between figure and text flowing beneath it */
+}
+
+/* Float Right (Annex 2) */
+.float-right {
+  float: right;
+  margin-left: 1.5rem;  /* Space between figure and wrapping text on the left */
+  margin-bottom: 0.75rem; /* Space between figure and text flowing beneath it */
+}
+
+/* Clearfix: Prevents sibling elements below from collapsing into the float */
+.wrapped-content::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Mobile Responsive: Full-width stacked layout on small screens */
+@media (max-width: 640px) {
+  .float-media.float-left,
+  .float-media.float-right {
+    float: none;
+    width: 100%;
+    margin: 0 0 1rem 0;
+  }
+}
+
+.example-text {
+  margin: 1.25rem 2rem;            /* Indent from both left and right */
+  padding-left: 1rem;
+  border-left: 2px solid #cbd5e1;  /* Thin divider line */
+  font-style: italic;
+  color: #475569;                  /* Slightly lighter text tone */
+}
+
+
+
+/* Minimalist Typographic Styling */
+.example-text-styled {
+  font-family: 'Georgia', 'Cambria', serif; /* Serif font creates contrast */
+  font-style: italic;                       /* Italicized body text */
+  color: #475569;                           /* Muted slate gray */
+  line-height: 1.65;
+}
+
+/* Label stays strictly on the same line */
+.example-label {
+  display: inline;                                   /* Forces label to be on the same line */
+  font-family: system-ui, -apple-system, sans-serif; /* Clean sans-serif badge */
+  font-style: normal;                                 /* Keeps label upright */
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0284c7;                                    /* Accent color */
+  margin-right: 0.3rem;                              /* Space before sentence starts */
+}
+
+.example-text-styled p {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.98rem;
+}
+
+.example-text-styled p:last-child {
+  margin-bottom: 0;
+}
+
+.example-tag {
+  color: #0284c7; /* Blue color */
+  font-weight: bold;
+}
+
+.example-text {
+  font-style: italic; /* Italic text */
+}
+
+
+
+
+
+
+
+/* Outer Container for Side-by-Side Layout */
+.tables-container {
+  display: flex;
+  flex-wrap: wrap;        /* Stacks vertically on smaller screens */
+  gap: 1rem;              /* Tighter spacing between side-by-side cards */
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Rounded Corner Card Wrappers */
+.table-card {
+  flex: 1 1 280px;        /* Side-by-side behavior */
+  min-width: 0;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;      /* Rounded corners */
+  padding: 0.75rem;       /* Reduced internal padding */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Forces the single table card to match total width */
+.single-table-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Card Header Title */
+.table-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Horizontal Scroll Wrapper inside Card (prevents breaking rounded borders) */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+/* Compact Table Base Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.78rem;      /* Reduced font size (approx 10-11px) */
+  line-height: 1.25;       /* Reduced line spacing */
+  text-align: left;
+}
+
+/* Compact Headers */
+th {
+  background-color: #f8fafc;
+  color: #334155;
+  font-weight: 600;
+  padding: 0.35rem 0.5rem; /* Tightened padding */
+  border-bottom: 1.5px solid #cbd5e1;
+  white-space: nowrap;
+}
+
+/* Compact Cells */
+td {
+  padding: 0.35rem 0.5rem; /* Tightened padding */
+  border-bottom: 1px solid #edf2f7;
+  color: #475569;
+}
+
+/* Alternate Row Highlight */
+tbody tr:nth-child(even) {
+  background-color: #fdfdfd;
+}

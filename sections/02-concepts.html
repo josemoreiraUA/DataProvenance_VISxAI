@@ -11,22 +11,55 @@
 <p>
     A provenance semiring is an algebraic structure $( \mathbb{K}, +, \cdot \, ,   0, 1)$, where $\mathbb{K}$ denotes a set of provenance tokens, 
     $+$ is a commutative and associative operator with identity  \( 0 \), and $\cdot$ is a commutative and associative operator  with identity  \( 1 \)  
-    distributive over $+$ [REFS]. 
+    distributive over $+$ [REFS].
+    A provenance token is a unique identifier that represents a source tuple in the input dataset.
     The semiring addition operator (+) represents alternative derivations of a tuple, while the multiplication operator (·) represents joint 
     participation of tuples in the same derivation.
+
+    For instance, when two datasets are joined, the provenance of each resulting tuple is expressed as the conjunction of the provenance annotations 
+    of the contributing tuples, such as $t_1 \cdot r_2$, where $t_1$ and $r_2$ are provenance tokens.
+    When a column is projected, for instance to obtain its unique values, the provenance of each resulting tuple is expressed as the sum of the provenance 
+    annotations of the contributing tuples, such as $t_1 + t_2$, indicating that the tuple can be derived from multiple alternative inputs.           
+    If the contributing tuples are themselves derived from other datasets, their annotations may be provenance polynomials rather than individual tokens.
+</p>
+<p>
     These algebraic annotations can be combined and propagated through the query evaluation process according to the semantics of the relational algebra Selection, Projection, Join and 
     Union operators, while preserving the semantics of the original query.
     Thus, the provenance of each output tuple can be expressed as a provenance polynomial that compactly encodes all possible derivations leading to that result.     
 </p>
 
+TO DELETE...<hr>
+
 <div class="example-box">
-  <span class="example-label">Example 1: Provenance Annotation</span>
-  <code>josé manuel matos moreira</code>
-  <pre><code>josé manuel matos moreira</code></pre>
-  <code>josé manuel matos moreira</code>
     <p>
-        For instance, consider...
-    </p>
+        For instance, consider a company operating in two distinct sectors: industrial and commercial. 
+        Although the two sectors have been merged, parts of their data remain distributed across heterogeneous sources, such as relational databases, Parquet files, and CSV files, 
+        each with its own schema and structure.
+        
+        <h4>Unified data</h4>
+
+        <code><strong>Employees</strong>(empId, name, gender, birthdate, department, hiredDate, prov)</code> <br> 
+        <code><strong>Managers</strong>(managerId, empId, prov)</code> <br> 
+        <code><strong>Promotions</strong>(empId, date, oldPosition, newPosition, decision, decisionSource, comments)</code>
+
+        <h4>Business sector data</h4>
+        <code><strong>Business_reviews</strong>(empId, year, score, prov)</code> <br>
+        <code><strong>Manager_reviews</strong>(empId, year, score, managerId, prov)</code> <br>
+        <code><strong>Training_actions</strong>(empId, date, description, credits, prov)</code> <br>
+        The score is a value in 0...100.
+
+        <h4>industrial sector data</h4>
+
+        <code><strong>annual_reviews</strong>(empId, year, officialScore, managerScore, managerId, prov)</code> <br>
+        <code><strong>training_programs</strong>(empId, year, programs_count, credits_sum, prov)</code> <br>
+        The officialScore is also a value in 0...100, but the manager score is a letter in A, B, ..., E.
+
+        <p> 
+            Each table has a column named <code>prov</code> holding the provenance token, which serves as a unique identifier for each tuple.
+
+        </p>
+...UNTIL HERE<hr>
+
 
 </div>
 
@@ -36,25 +69,246 @@
 
     To address this limitation, provenance semirings are extended by introducing a semimodule structure defined over a semiring and a monoid ($K \otimes M$), 
     where $K$ is a commutative semiring and $M$ is a commutative monoid representing the aggregation domain. 
-    For instance, the SUM aggregation  is defined over the commutative monoid (R,+,0), where R is the set of real numbers, + is the addition operation and 
-    0 is its identity element. 
+    For instance, the SUM aggregation  is defined over the commutative monoid $(R,+,0)$, where R is the set of real numbers, + is the addition operation and 
+    0 is its identity element [REF]. 
 
     This extension preserves both the computed value and the contribution of every participating tuple, enabling understanding not only which records 
     contributed to the derivation of a data item but also how strongly they influenced aggregated features.
 </p>
 
+<!-- 1. Two Tables Side by Side -->
+
+
+  <!-- Styled Example Text -->
+  <div class="example-text-styled">
+    <p>
+      <strong class="example-label">EXAMPLE 1:</strong> 
+        Consider a company operating in two sectors: industrial and commercial. 
+        Although the sectors have been merged, some of their data remains distributed across heterogeneous sources, such as relational databases, 
+        Parquet files, and CSV files, each with its own schema and structure.
+
+        For instance, the commercial sector stores its training courses and employee enrollments in two separate tables. 
+        An employee can attend multiple training courses per year. 
+        In contrast, the industrial sector stores employee training information in a single table, with each employee attending only one training course per year. 
+        The example datasets are as follows:
+    </p>
+  </div>
+<br>
+
+
+<h4>Business sector data</h4> 
+<div class="tables-container">
+  
+  <div class="table-card">
+    <h4 class="table-title">Training_actions</h4>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>actionId</th>
+            <th>name</th>
+            <th>hours</th>
+            <th>prov</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>act-001</td>
+            <td>CRM</td>
+            <td>8</td>
+            <td>a1</td>
+          </tr>
+          <tr>
+            <td>act-002</td>
+            <td>Business communication</td>
+            <td>6</td>
+            <td>a2</td>
+          </tr>
+          <tr>
+            <td>act-003</td>
+            <td>Digital Marketing</td>
+            <td>6</td>
+            <td>a3</td>
+          </tr>
+          <tr>
+            <td>act-004</td>
+            <td>Conflict resolution</td>
+            <td>6</td>
+            <td>a4</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h4 class="table-title">Employees_training_actions</h4>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>empId</th>
+            <th>name</th>
+            <th>date</th>
+            <th>actionId</th>
+            <th>prov</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>emp-201</td>
+            <td>Carla Gomez</td>
+            <td>Jan, 2025</td>
+            <td>act-003</td>
+            <td>t1</td>
+          </tr>
+          <tr>
+            <td>emp-201</td>
+            <td>Carla Gomez</td>
+            <td>Mar, 2025</td>
+            <td>act-001</td>
+            <td>t2</td>
+          </tr>
+          <tr>
+            <td>emp-202</td>
+            <td>David Miller</td>
+            <td>Jan, 2025</td>
+            <td>act-003</td>
+            <td>t3</td>
+          </tr>
+          <tr>
+            <td>emp-202</td>
+            <td>David Miller</td>
+            <td>Mar, 2025</td>
+            <td>act-001</td>
+            <td>t4</td>
+          </tr>
+          <tr>
+            <td>emp-202</td>
+            <td>David Miller</td>
+            <td>Apr, 2025</td>
+            <td>act-002</td>
+            <td>t5</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<h4>Industrial sector data</h4>
+<!-- 2. Single Table Below (Same Width & Style) -->
+<div class="table-card single-table-card">
+  <h4 class="table-title">Employees_training</h4>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>empId</th>
+          <th>name</th>
+          <th>training_program</th>
+          <th>year</th>
+          <th>hours</th>
+          <th>prov</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>emp-101</td>
+          <td>Alice Smith</td>
+          <td>Safety protocols</td>
+          <td>2025</td>
+          <td>16</td>
+          <td>p1</td>
+        </tr>
+        <tr>
+          <td>emp-102</td>
+          <td>Michael Tatum</td>
+          <td>Lean Manufacturing</td>
+          <td>2025</td>
+          <td>20</td>
+          <td>p2</td>
+        </tr>
+        <tr>    
+          <td>emp-103</td>
+          <td>John Ewing</td>
+          <td>Safety protocols</td>
+          <td>2025</td>
+          <td>16</td>
+          <td>p3</td>
+        </tr>
+        <tr>    
+          <td>emp-104</td>
+          <td>Nancy Davis</td>
+          <td>Automation</td>
+          <td>2025</td>
+          <td>20</td>
+          <td>p4</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<div class="example-text-styled">
 <p>
-    For instance ...
+    When calculating the total training hours per employee for 2025, we obtain the results shown below. <br>
+    The first two rows correspond to employees from the business sector. 
+    Their semiring annotations show the joint contribution of tuples from <code>Training_actions</code> and <code>Employees_training_actions</code> using ($\cdot$), 
+    while the operator ($+$) denotes the contributing derivations to the aggregation group. 
+    
+    The remaining rows represent employees from the industrial sector, where each aggregation is given by a single source tuple.
 </p>
 
-<p>
-  Data provenance can addresses this gap by acting as an audit trail that documents the complete lifecycle of data from origin to consumption. 
-  Frameworks like the W3C PROV data model formalize these relationships by linking Entities (data artifacts), Activities (processing steps), and Agents (systems or users), 
-  while workflow provenance tools capture the exact execution environments of machine learning pipelines. 
-  Depending on the application, provenance can be tracked at varying levels of granularity—ranging from coarse-grained dataset lineage to fine-grained row- and 
-  cell-level tracking—revealing not just <em>which</em> features drove an AI decision, but <em>why</em> those features took those values in the first place.
-</p>
-      
-<p>
-    The theoretical foundations were implemented... dataprov, provSQL...
-</p>
+<!-- 2. Single Table Below (Same Width & Style) -->
+<div class="table-card single-table-card">
+  <h4 class="table-title">Result with provenance</h4>
+  <div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>empId</th>
+                <th>name</th>
+                <th>total hours</th>
+                <th>semiring annotation</th>
+                <th>semimodule annotation</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>emp-201</td>
+                <td>Carla Gomez</td>
+                <td>14</td>
+                <td>$t_1 \cdot a_3 + t_2 \cdot a_1$</td>
+                <td>$(t_1 \cdot a_3) \otimes 6 + (t_2 \cdot a_1) \otimes 8$</td>
+            </tr>
+            <tr>
+                <td>emp-202</td>
+                <td>David Miller</td>
+                <td>20</td>
+                <td>$t_3 \cdot a_3 + t_4 \cdot a_1 + t_5 \cdot a_2$</td>
+                <td>$(t_3 \cdot a_3) \otimes 6 + (t_4 \cdot a_1) \otimes 8 + (t_5 \cdot a_2) \otimes 6$</td>
+            </tr>
+            <tr>
+                <td>emp-101</td>
+                <td>Alice Smith</td>
+                <td>16</td>
+                <td>$p_1$</td>
+                <td>$p_1 \otimes 16$</td>
+            </tr>        
+            <tr>
+                <td>$\dots$</td>
+                <td>$\dots$</td>
+                <td>$\dots$</td>
+                <td>$\dots$</td>
+                <td>$\dots$</td>
+            </tr>        
+        </tbody>
+    </table>
+  </div>
+</div>
+<br>
+
+

@@ -66,47 +66,14 @@
       <include-html src="sections/02-concepts.html"></include-html>
     </section>
 
-    <!-- Section 3: Interactive Visualizer Demo -->
-    <section id="demo">
-      <h2>3. Interactive Provenance Explorer</h2>
-      <p>Click below to inspect how individual outputs map directly to their source dataset batch and transformation rules:</p>
-
-      <div class="interactive-card">
-        <div class="controls">
-          <button class="btn active" onclick="updateSample('sample1', this)">Sample #104 (Approved)</button>
-          <button class="btn" onclick="updateSample('sample2', this)">Sample #209 (Flagged)</button>
-        </div>
-
-        <div class="pipeline-grid">
-          <div class="pipeline-step">
-            <div class="step-title">Prediction</div>
-            <div class="step-value" id="val-pred">Low Risk (89%)</div>
-          </div>
-          <div class="pipeline-step">
-            <div class="step-title">Transformation</div>
-            <div class="step-value" id="val-trans">MinMax Scaler v1.2</div>
-          </div>
-          <div class="pipeline-step">
-            <div class="step-title">Source Batch</div>
-            <div class="step-value" id="val-source">Batch_2024_Q1.csv</div>
-          </div>
-        </div>
-
-        <div class="provenance-box" id="val-log">LINEAGE TRACE:
-↳ Origin: Primary Credit API Feed
-↳ Ingested: 2024-01-15
-↳ Preprocessing: Null values imputed using median</div>
-      </div>
-    </section>
-
     <!-- Section 3 -->
     <section id="explainability">
-      <include-html src="sections\03-explainability.html"></include-html>
+      <include-html src="sections/03-explainability.html"></include-html>
     </section>
 
         <!-- Section 4 -->
     <section id="summary">
-      <include-html src="sections\04-summary.html"></include-html>
+      <include-html src="sections/04-summary.html"></include-html>
     </section>
 
     <!-- Section ack -->
