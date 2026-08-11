@@ -417,8 +417,8 @@ mjx-container[jax="CHTML"][display="true"] {
 
 /* Float styling for media */
 .float-media {
-  width: 70%; /* Adjust width of the figure relative to text area */
-  max-width: 680px;
+  width: 72%; /* Adjust width of the figure relative to text area */
+  max-width: 720px;
 }
 
 /* Media element constraints */
@@ -634,7 +634,7 @@ tbody tr:nth-child(even) {
 /* Right-hand context box */
 .content-display {
     flex: 1;
-    width: 65%;
+    width: 68%;
     min-width: 0;
 
     background: white;
@@ -699,7 +699,7 @@ tbody tr:nth-child(even) {
     display: flex;
     gap: 20px;
     width: 100%;
-    height: 420px;
+    height: 560px;
     box-sizing: border-box;
 }
 
@@ -768,7 +768,8 @@ tbody tr:nth-child(even) {
     justify-content: center;
     padding: 25px;
     box-sizing: border-box;
-    overflow: auto;
+    overflow-y: hidden !important; 
+    overflow-x: auto !important;
 }
 
 

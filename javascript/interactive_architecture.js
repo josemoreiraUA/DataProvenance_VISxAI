@@ -23,7 +23,7 @@ FROM     Employees_training.parquet ET
     ast_prov: `
         <img
             src="images/ast1_prov.png"
-            alt="Relational Algebra">
+            alt="Annotated Abstract Syntax Tree">
     `,
 
     annotated_query: `
@@ -43,31 +43,9 @@ FROM   Employees_training.parquet ET
         </code></pre>`,
 
     system: `
-        <div class="content-description">
-
-            <h3>Query Result</h3>
-
-            <table>
-                <tr>
-                    <th>empId</th>
-                    <th>Name</th>
-                    <th>Promotion Date</th>
-                </tr>
-
-                <tr>
-                    <td>emp-101</td>
-                    <td>Alice Smith</td>
-                    <td>2025-03-15</td>
-                </tr>
-
-                <tr>
-                    <td>emp-105</td>
-                    <td>Robert Jones</td>
-                    <td>2025-06-21</td>
-                </tr>
-            </table>
-
-        </div>
+        <img
+            src="images/system.png"
+            alt="System overview">
     `
 };
 

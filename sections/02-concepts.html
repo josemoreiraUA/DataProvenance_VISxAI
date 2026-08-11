@@ -302,20 +302,13 @@ THE METHODS SECTION IS HERE
 
 
 <p>
-    The theoretical formalisms proposed in [REF1, REF2] have been implemented in provenance frameworks like Perm [REF], GProM [REF], 
+    The theoretical formalisms proposed in [REF1, REF2] have been implemented in provenance frameworks like GProM [REF], 
     ProvSQL [REF] and DataProv [REF], primarily targeting database systems and query processing. 
-    They follow the same underlying principles, but their notation and terminology may differ slightly.
-    These provenance representations also provide a foundation for end-to-end explainability by enabling data contributions to be traced 
-    from their sources through processing pipelines to analytical and machine learning outcomes.
-<p>
- 
-  Distributed query engines enable data to be queried and combined across heterogeneous sources without requiring all data to be centralized [REFS]. In a provenance context, they can preserve lineage across these distributed operations, enabling end-to-end tracing from original data sources to the final model inputs.
-</p>
-
-
-<p>
-  Taking DataProv as a structural reference model, the system annotates a declarative query statement—such as SELECT ...—by first compiling its syntax tokens into a hierarchical Abstract Syntax Tree (AST) that maps out the underlying relational algebra execution plan. In accordance with the foundational theories of provenance semirings and semi-modules, the engine systematically translates these database operators into mathematical structures, mapping projections and selections to semiring multiplications, union combinations to semiring additions, and aggregate processing workflows to tensor scale modifications. Once these algebraic polynomial variables are injected directly into the corresponding AST expression nodes, the compiler performs an inverse translation rewrite to reconstruct a fully valid, synthesized target SQL statement equipped with active execution provenance instrumentation layers.
-</p>
+    They follow similar underlying principles, but their notation and terminology may differ slightly.
+    Complementarily, distributed query engines allow data aggregation across heterogeneous sources, including relational and NoSQL databases, parquet files, excel documents,
+    APIs among other [REFS]. 
+    Together, they can provide a baseline for end-to-end explainability by tracing data contributions across processing pipelines in data analytics and machine learning tasks.
+  </p>
 
 
 <div class="wrapped-content">
@@ -357,10 +350,34 @@ THE METHODS SECTION IS HERE
 
 </div>
 
-  <!-- Paragraph Text -->
-  <p>
-    ... to be continued y...  
-  </p>
+
+  <div class="example-text-styled">
+    <p>
+      <strong class="example-label">EXAMPLE:</strong> 
+      Taking DataProv as a structural reference, the system annotates a declarative query and constructs an Abstract Syntax Tree (AST) that represents its logical structure. 
+      The AST nodes represent relational operations and the edges data-flow dependencies. The leaf nodes correspond to the underlying data sources.
+      The AST is traversed bottom-up and the provenance annotator maps relational operations to their corresponding algebraic semantics: 
+      joins are associated with semiring multiplication, projection and union operations with semiring addition, and aggregation  with the appropriate semimodule operations 
+      and scalar transformations. 
+      The provenance expressions represented as conjunctions, disjunctions and aggregations are then injected into the corresponding AST nodes. They are  displayed in the 
+      'Annotated Abstract Syntax Tree' within light blue boxes. 
+      Finally, the annotator performs an inverse translation and translates the annotated AST back into a declarative query statement that carries the provenance annotations.
+      The result of a provenance-enabled query can be persisted, together with its provenance information, either in a database or as a dataset. 
+      This materialized result can subsequently be treated as a new data source and used recursively in further queries, enabling provenance to be propagated across multiple 
+      stages of a data-processing pipeline.
+    </p>
+
+    <p>
+        The button ‘System Overview’  displays a diagram of an end-to-end data processing system for tracking data provenance in support of explainable AI. 
+        The Distributed Query Engine, e.g., Trino,  is responsible for querying and aggregating data across diverse formats and systems in a unified way. 
+        The Provenance Annotator performs the actions just described for tagging data with details about its origin, transformations and lineage. 
+        This annotated, traceable data is then made accessible to two end-users and automated systems who can trace to trace their inputs and outputs 
+        back to the underlying data sources and transformations. This supports the analysis, validation, and debugging of model predictions and analytical 
+        results, while improving interpretability, reproducibility and transparency in data-driven decision-making.
+
+    </p>
+  </div>
+
 </div>
 
 
