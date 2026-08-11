@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simplified AST Representation</title>
+    <script src="https://d3js.org"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .node circle {
+            fill: #fff;
+            stroke: #4a90e2;
+            stroke-width: 3px;
+        }
+        .node text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .node .detail {
+            font-size: 10px;
+            fill: #6c757d;
+            font-family: monospace;
+        }
+        .link {
+            fill: none;
+            stroke: #ced4da;
+            stroke-width: 2px;
+        }
+        #canvas {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+
+    <svg id="canvas"></svg>
+
+    <script>
+        // 1. Simplified AST JSON Data
+        const treeData = {
+            name: "Union All",
+            type: "operator",
+            children: [
+                {
+                    name: "Projection",
+                    detail: "EA.name, SUM(T.hours), prov",
+                    children: [
+                        {
+                            name: "Group By",
+                            detail: "EA.name",
+                            children: [
+                                {
+                                    name: "Join",
+                                    detail: "T.actionId = EA.actionId",
+                                    children: [
+                                        { name: "Training_actions.parquet T", detail: "Dataset" },
+                                        { name: "Employees_training_actions.parquet EA", detail: "Dataset" }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Projection",
+                    detail: "ET.name, ET.hours, prov",
+                    children: [
+                        { name: "Employees_training.parquet ET", detail: "Dataset" }
+                    ]
+                }
+            ]
+        };
+
+        // 2. Setup Canvas Dimensions
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const margin = { top: 40, right: 150, bottom: 40, left: 150 };
+
+        const svg = d3.select("#canvas")
+            .attr("width", width)
+            .attr("height", height)
+            .call(d3.zoom().on("zoom", (event) => {
+                g.attr("transform", event.transform);
+            }))
+            .append("g");
+
+        // Inner group to apply margins and zoom tracking
+        const g = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // 3. Initialize Tree Layout
+        const tree = d3.tree().size([height - margin.top - margin.bottom, width - margin.left - margin.right]);
+        const root = d3.hierarchy(treeData);
+
+        // Compute layout positions
+        tree(root);
+
+        // 4. Render Links (Edges)
+        g.selectAll(".link")
+            .data(root.links())
+            .enter()
+            .append("path")
+            .attr("class", "link")
+            .attr("d", d3.linkHorizontal()
+                .x(d => d.y)
+                .y(d => d.x)
+            );
+
+        // 5. Render Nodes
+        const node = g.selectAll(".node")
+            .data(root.descendants())
+            .enter()
+            .append("g")
+            .attr("class", "node")
+            .attr("transform", d => `translate(${d.y},${d.x})`);
+
+        // Add node node marker circle
+        node.append("circle")
+            .attr("r", 6)
+            .style("fill", d => d.data.detail === "Dataset" ? "#28a745" : "#fff")
+            .style("stroke", d => d.data.detail === "Dataset" ? "#28a745" : "#4a90e2");
+
+        // Add Operator/Dataset Main Title
+        node.append("text")
+            .attr("dy", "-8")
+            .attr("x", d => d.children ? -12 : 12)
+            .attr("text-anchor", d => d.children ? "end" : "start")
+            .text(d => d.data.name);
+
+        // Add Expression Attributes / Details
+        node.append("text")
+            .attr("class", "detail")
+            .attr("dy", "12")
+            .attr("x", d => d.children ? -12 : 12)
+            .attr("text-anchor", d => d.children ? "end" : "start")
+            .text(d => d.data.detail && d.data.detail !== "Dataset" ? d.data.detail : "");
+            
+    </script>
+</body>
+</html>

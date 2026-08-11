@@ -1,0 +1,21 @@
+Create an animated gif to represent graphically the steps / workfloe in the text:
+Taking DataProv as a structural reference model, the system annotates a declarative query statement—such as SELECT ...—by first compiling its syntax tokens into a hierarchical Abstract Syntax Tree (AST) that maps out the underlying relational algebra execution plan. In accordance with the foundational theories of provenance semirings and semi-modules, the engine systematically translates these database operators into mathematical structures, mapping projections and selections to semiring multiplications, union combinations to semiring additions, and aggregate processing workflows to tensor scale modifications. Once these algebraic polynomial variables are injected directly into the corresponding AST expression nodes, the compiler performs an inverse translation rewrite to reconstruct a fully valid, synthesized target SQL statement equipped with active execution provenance instrumentation layers.
+
+Consider that the source query is:
+SELECT EA.name as Employee, T.name as Action, T.hours, EA.prov || '.' || T.prov as prov
+FROM   Training_actions.parquet T, Employees_training_actions.parquet EA
+WHERE  T.actionId = EA.actionId
+    UNION ALL
+SELECT ET.name, ET.training_program, ET.hours, prov
+FROM   Employees_training.parquet ET
+
+and the annotated query is:
+SELECT EA.name as Employee, SUM(T.hours) as hours, '(' || STRING_AGG(EA.prov || ' · ' || T.prov || ' ⊗ ' || hours, '  +  '  ORDER BY EA.prov, T.prov) || ')' as prov
+FROM   Training_actions.parquet T, Employees_training_actions.parquet EA
+WHERE  T.actionId = EA.actionId
+GROUP BY EA.name
+    UNION ALL
+SELECT ET.name, ET.hours, prov
+FROM   Employees_training.parquet ET
+
+Give also a graphical representation of the AST of the original query and include it in the animated gif.

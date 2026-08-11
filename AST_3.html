@@ -1,0 +1,709 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataProv AST Visualization</title>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        #tree {
+            width: 100%;
+            height: 800px;
+            overflow: auto;
+        }
+
+        svg {
+            display: block;
+        }
+
+        .link {
+            fill: none;
+            stroke: #94a3b8;
+            stroke-width: 2px;
+        }
+
+        .node {
+            cursor: pointer;
+        }
+
+        .node rect {
+            stroke-width: 1.5px;
+            rx: 8;
+            ry: 8;
+        }
+
+        /* Operator nodes */
+        .node.operator rect {
+            fill: #dbeafe;
+            stroke: #2563eb;
+        }
+
+        .node.operator .title {
+            fill: #1e3a8a;
+            font-weight: bold;
+        }
+
+        /* Dataset nodes */
+        .node.dataset rect {
+            fill: #dcfce7;
+            stroke: #16a34a;
+        }
+
+        .node.dataset .title {
+            fill: #166534;
+            font-weight: bold;
+        }
+
+        /* Projection expressions */
+        .expression {
+            fill: #334155;
+            font-size: 12px;
+        }
+
+        /* Provenance */
+        .provenance {
+            fill: #7e22ce;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Join condition */
+        .condition {
+            fill: #1d4ed8;
+            font-size: 11px;
+            font-style: italic;
+        }
+
+        /* Expand/collapse indicator */
+        .toggle {
+            fill: #64748b;
+            stroke: white;
+            stroke-width: 1px;
+        }
+
+        .toggle-text {
+            fill: white;
+            font-size: 11px;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .node:hover rect {
+            filter: brightness(0.96);
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="tree"></div>
+
+<script>
+
+/* ============================================================
+   AST
+   ============================================================ */
+
+const data = {
+    name: "UNION ALL",
+    type: "operator",
+
+    children: [
+
+        {
+            name: "PROJECT",
+            type: "operator",
+
+            expressions: [
+                "EA.name AS Employee",
+                "T.name AS Action",
+                "T.hours"
+            ],
+
+            provenance: "EA.prov ⊗ T.prov",
+
+            children: [
+
+                {
+                    name: "JOIN",
+                    type: "operator",
+                    condition: "T.actionId = EA.actionId",
+
+                    children: [
+
+                        {
+                            name: "Training_actions.parquet AS T",
+                            type: "dataset"
+                        },
+
+                        {
+                            name: "Employees_training_actions.parquet AS EA",
+                            type: "dataset"
+                        }
+                    ]
+                }
+            ]
+        },
+
+        {
+            name: "PROJECT",
+            type: "operator",
+
+            expressions: [
+                "ET.name",
+                "ET.training_program",
+                "ET.hours"
+            ],
+
+            provenance: "ET.prov",
+
+            children: [
+
+                {
+                    name: "Employees_training.parquet AS ET",
+                    type: "dataset"
+                }
+            ]
+        }
+    ]
+};
+
+
+/* ============================================================
+   CONFIGURATION
+   ============================================================ */
+
+const container = document.getElementById("tree");
+
+let width = container.clientWidth;
+let height = container.clientHeight;
+
+const svg = d3.select("#tree")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+const g = svg.append("g");
+
+const tree = d3.tree()
+    .nodeSize([250, 150]);
+
+const root = d3.hierarchy(data);
+
+let nodeId = 0;
+
+root.each(d => {
+    d.id = ++nodeId;
+});
+
+
+/* ============================================================
+   INITIAL COLLAPSE STATE
+   ============================================================ */
+
+/*
+ * Keep the complete tree visible initially.
+ *
+ * If you want some branches collapsed initially, for example:
+ *
+ * root.children[0].children[0]._children =
+ *     root.children[0].children[0].children;
+ *
+ * root.children[0].children[0].children = null;
+ */
+
+
+/* ============================================================
+   UPDATE
+   ============================================================ */
+
+function update() {
+
+    tree(root);
+
+    const nodes = root.descendants();
+    const links = root.links();
+
+
+    /* --------------------------------------------------------
+       Calculate tree bounds
+       -------------------------------------------------------- */
+
+    const minX = d3.min(nodes, d => d.x);
+    const maxX = d3.max(nodes, d => d.x);
+
+    const minY = d3.min(nodes, d => d.y);
+    const maxY = d3.max(nodes, d => d.y);
+
+    const treeWidth = maxX - minX;
+    const treeHeight = maxY - minY;
+
+
+    /*
+     * Keep enough space around the tree.
+     */
+
+    const requiredWidth =
+        treeWidth + 200;
+
+    const requiredHeight =
+        treeHeight + 150;
+
+    svg
+        .attr(
+            "width",
+            Math.max(width, requiredWidth)
+        )
+        .attr(
+            "height",
+            Math.max(height, requiredHeight)
+        );
+
+
+    /*
+     * Center tree.
+     */
+
+    const offsetX =
+        Math.max(
+            50,
+            (Math.max(width, requiredWidth) - treeWidth) / 2 - minX
+        );
+
+    const offsetY =
+        Math.max(
+            50,
+            (Math.max(height, requiredHeight) - treeHeight) / 2 - minY
+        );
+
+    g.attr(
+        "transform",
+        `translate(${offsetX},${offsetY})`
+    );
+
+
+    /* ========================================================
+       LINKS
+       ======================================================== */
+
+    const link = g.selectAll(".link")
+        .data(
+            links,
+            d => d.target.id
+        );
+
+    link.join(
+        enter =>
+            enter
+                .append("path")
+                .attr("class", "link")
+                .attr("d", elbow),
+
+        update =>
+            update
+                .attr("d", elbow),
+
+        exit =>
+            exit.remove()
+    );
+
+
+    /* ========================================================
+       NODES
+       ======================================================== */
+
+    const node = g.selectAll(".node")
+        .data(
+            nodes,
+            d => d.id
+        );
+
+
+    const nodeEnter = node.enter()
+        .append("g")
+        .attr(
+            "class",
+            d => `node ${d.data.type}`
+        )
+        .attr(
+            "transform",
+            d => `translate(${d.x},${d.y})`
+        )
+        .on("click", function(event, d) {
+
+            /*
+             * Prevent clicks on a node from propagating.
+             */
+
+            event.stopPropagation();
+
+
+            /*
+             * Leaf nodes have nothing to expand.
+             */
+
+            if (!d.children && !d._children)
+                return;
+
+
+            /*
+             * Collapse.
+             */
+
+            if (d.children) {
+
+                d._children = d.children;
+                d.children = null;
+
+            }
+
+            /*
+             * Expand.
+             */
+
+            else {
+
+                d.children = d._children;
+                d._children = null;
+            }
+
+
+            update();
+        });
+
+
+    /* ========================================================
+       RECTANGLES
+       ======================================================== */
+
+    nodeEnter
+        .append("rect")
+        .attr(
+            "x",
+            d => -nodeWidth(d) / 2
+        )
+        .attr(
+            "y",
+            d => -nodeHeight(d) / 2
+        )
+        .attr(
+            "width",
+            d => nodeWidth(d)
+        )
+        .attr(
+            "height",
+            d => nodeHeight(d)
+        );
+
+
+    /* ========================================================
+       NODE CONTENT
+       ======================================================== */
+
+    nodeEnter.each(function(d) {
+
+        const node = d3.select(this);
+        const data = d.data;
+
+        let y =
+            -nodeHeight(d) / 2 + 22;
+
+
+        /* ----------------------------------------------------
+           Title
+           ---------------------------------------------------- */
+
+        node.append("text")
+            .attr("class", "title")
+            .attr("text-anchor", "middle")
+            .attr("x", 0)
+            .attr("y", y)
+            .attr("font-size", 15)
+            .text(data.name);
+
+
+        y += 23;
+
+
+        /* ----------------------------------------------------
+           Projection expressions
+           ---------------------------------------------------- */
+
+        if (data.expressions) {
+
+            data.expressions.forEach(expression => {
+
+                node.append("text")
+                    .attr("class", "expression")
+                    .attr("text-anchor", "middle")
+                    .attr("x", 0)
+                    .attr("y", y)
+                    .text(expression);
+
+                y += 17;
+            });
+        }
+
+
+        /* ----------------------------------------------------
+           Provenance
+           ---------------------------------------------------- */
+
+        if (data.provenance) {
+
+            node.append("line")
+                .attr(
+                    "x1",
+                    -nodeWidth(d) / 2 + 15
+                )
+                .attr(
+                    "x2",
+                    nodeWidth(d) / 2 - 15
+                )
+                .attr(
+                    "y1",
+                    y - 7
+                )
+                .attr(
+                    "y2",
+                    y - 7
+                )
+                .attr(
+                    "stroke",
+                    "#c4b5fd"
+                );
+
+
+            node.append("text")
+                .attr("class", "provenance")
+                .attr("text-anchor", "middle")
+                .attr("x", 0)
+                .attr("y", y + 10)
+                .text(data.provenance);
+        }
+
+
+        /* ----------------------------------------------------
+           JOIN condition
+           ---------------------------------------------------- */
+
+        if (data.condition) {
+
+            const conditionY =
+                -nodeHeight(d) / 2 + 40;
+
+
+            node.append("text")
+                .attr("class", "condition")
+                .attr("text-anchor", "middle")
+                .attr("x", 0)
+                .attr("y", conditionY)
+                .text(`ON ${data.condition}`);
+        }
+
+
+        /* ----------------------------------------------------
+           Expand/collapse indicator
+           ---------------------------------------------------- */
+
+        if (d.children || d._children) {
+
+            const x =
+                nodeWidth(d) / 2 - 13;
+
+            const y =
+                -nodeHeight(d) / 2 + 13;
+
+
+            node.append("circle")
+                .attr(
+                    "class",
+                    "toggle"
+                )
+                .attr(
+                    "cx",
+                    x
+                )
+                .attr(
+                    "cy",
+                    y
+                )
+                .attr(
+                    "r",
+                    7
+                );
+
+
+            node.append("text")
+                .attr(
+                    "class",
+                    "toggle-text"
+                )
+                .attr(
+                    "text-anchor",
+                    "middle"
+                )
+                .attr(
+                    "x",
+                    x
+                )
+                .attr(
+                    "y",
+                    y + 4
+                )
+                .text(
+                    d.children ? "−" : "+"
+                );
+        }
+
+    });
+
+
+    /* ========================================================
+       UPDATE NODE POSITIONS
+       ======================================================== */
+
+    nodeEnter.merge(node)
+        .attr(
+            "transform",
+            d => `translate(${d.x},${d.y})`
+        );
+
+
+    /*
+     * Remove old nodes.
+     */
+
+    node.exit().remove();
+}
+
+
+/* ============================================================
+   NODE DIMENSIONS
+   ============================================================ */
+
+function nodeWidth(d) {
+
+    if (d.data.type === "dataset") {
+
+        return Math.max(
+            240,
+            Math.min(
+                430,
+                d.data.name.length * 7 + 45
+            )
+        );
+    }
+
+
+    if (d.data.type === "operator") {
+
+        return 270;
+    }
+
+
+    return 220;
+}
+
+
+function nodeHeight(d) {
+
+    let lines = 1;
+
+
+    if (d.data.expressions) {
+
+        lines +=
+            d.data.expressions.length;
+    }
+
+
+    if (d.data.provenance) {
+
+        lines += 1;
+    }
+
+
+    if (d.data.condition) {
+
+        lines += 1;
+    }
+
+
+    return Math.max(
+        55,
+        28 + lines * 18
+    );
+}
+
+
+/* ============================================================
+   TOP-TO-BOTTOM CONNECTORS
+   ============================================================ */
+
+function elbow(d) {
+
+    const sourceX = d.source.x;
+    const sourceY = d.source.y;
+
+    const targetX = d.target.x;
+    const targetY = d.target.y;
+
+
+    /*
+     * Vertical → horizontal → vertical.
+     */
+
+    const middleY =
+        (sourceY + targetY) / 2;
+
+
+    return `
+        M ${sourceX},${sourceY}
+        V ${middleY}
+        H ${targetX}
+        V ${targetY}
+    `;
+}
+
+
+/* ============================================================
+   INITIAL DRAW
+   ============================================================ */
+
+update();
+
+
+/* ============================================================
+   RESPONSIVE RESIZING
+   ============================================================ */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        width =
+            container.clientWidth;
+
+        height =
+            container.clientHeight;
+
+        update();
+    }
+);
+
+</script>
+
+</body>
+</html>
+```
