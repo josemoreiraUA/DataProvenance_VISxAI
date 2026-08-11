@@ -1,6 +1,6 @@
-<h2>Explaining the Data Pipeline </h2>
+<h2>... Explainability...</h2>
 
-Building on the previous foundations, we present two representative examples. The first presents a baseline data lineage scenario, illustrating how individual output tuples produced through common operations such as selection, projection, join, union and aggregation, can be traced back to the source data that contributed to their derivation. The second case introduces a root-cause analysis for an employee promotion prediction model. It puts in evidence how intermediate data outside the training dataset can quietly condition model results, and how provenance polynomials allow to trace the underlying pathways through diverse perspectives, namely the data and the pipeline methods themselves. This provides the means to analyze the upstream data preparation to detect fairness anomalies that favor or prejudice specific employee groups, and isolate their root causes.  While algebraic annotations precisely capture data dependencies, they can become hard to interpret in large datasets or complex pipelines. To overcome this, we complement our algebraic representation with graphical visualizations, making data derivation paths and their underlying dependencies easier to understand. Importantly, the provenance-based analysis is model agnostic, remaining independent of the predictive model itself.
+
 
 
 <h3>Lineage</h3>
@@ -15,11 +15,14 @@ Building on the previous foundations, we present two representative examples. Th
     Lineage can be captured during query execution or derived on demand from richer, fine-grained provenance representations, 
     such as provenance polynomials or semiring annotations.
 
-    For example, in a database query joining a customer table with a transaction log, fine-grained provenance might record the exact join condition and 
-    feature scalings applied ($t_1 \cdot t_2$).
-    In contrast, lineage simplifies this result into the minimal source set specifying simply that output record $R_1$ was 
-    derived from Customer tuple $C_{104}$ and Transaction tuple $T_{892}$.
+  For example, in a database query joining a customer table with a transaction log, fine-grained provenance might record the exact join condition and 
+  feature scalings applied ($t_1 \cdot t_2$). ~
+  In contrast, lineage simplifies this result into the minimal source set—specifying simply that output record $R_1$ was 
+  derived from Customer tuple $C_{104}$ and Transaction tuple $T_{892}$.
 </p>
+
+EXAMPLE HERE... atrasos no porto de faro e olhão por dia da semana.
+
 
 <br>
 <!-- HTML Structure -->
@@ -61,7 +64,7 @@ Building on the previous foundations, we present two representative examples. Th
 
   <!-- Paragraph Text -->
   <p>
-    ... to be continued ...  
+    ???????????????    
   </p>
 </div>
 
@@ -75,21 +78,8 @@ Building on the previous foundations, we present two representative examples. Th
 
 providing an auditable, transparent record of a dataset's origin, transformation history, and computational dependencies. By revealing exactly which raw inputs, preprocessing steps, or synthetic data shaped a model, provenance helps teams detect and rectify demographic biases and historical imbalances at their root—a critical requirement for fairness. Furthermore, this end-to-end traceability establishes trustworthiness, allowing stakeholders, auditors, and end-users to verify data authenticity, rule out dynamic data poisoning, and confidently evaluate the validity of model outputs.
 
-<h3>Debugging  and Influence functions </h3>
+<h3>Debugging /Influence functions? </h3>
 
-<p>
-A concrete example is to detect whether employees are effectively evaluating themselves in a promotion prediction pipeline. For instance, an employee’s performance record may be used both as an input to the training data and, directly or through intermediate transformations, as the basis for the target or evaluation features. Techniques such as influence functions can help quantify how much a specific training record affects a model prediction, answering questions such as: How much would this prediction change if a particular training record were removed or slightly modified? This can help identify erroneous or suspicious predictions, mislabeled data, data poisoning, and records with disproportionate influence.
-</p>
-
-<p>
-Influence functions complement, rather than replace, relational data provenance. While provenance polynomials precisely trace which source records and operations produced a data item, influence functions capture the continuous statistical or gradient-based impact of training records on model outputs. Combining both perspectives can therefore connect an anomalous prediction to its upstream data lineage while also quantifying how strongly individual records influenced the model's decision.
-</p>
-
-See my additional notes and include the visual example.
-
-
-
-<!--
 Exemplo: existem empregados a avaliar-se a si próprios?
 
 This can be done using techniques such as influence functions, which quantify the impact of individual training points on model predictions.
@@ -106,4 +96,3 @@ This can be done using techniques such as influence functions, which quantify th
 + Influence Functions vs. Relational Data Provenance
     While relational data provenance (like semiring annotations) tracks the precise operational lineage of database queries (e.g., which tuple joined with which table), 
     influence functions provide statistical/gradient provenance—measuring continuous mathematical impact on probabilistic model outcomes.
-  -->

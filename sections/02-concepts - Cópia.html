@@ -1,6 +1,4 @@
-<h2>Provenance semirings and semimodules</h2>
-
-<h3>Concepts</h3>
+<h2>...Data provenance concepts...</h2>
 
 <p>
     There are several forms of data provenance that capture complementary aspects of how data is produced and consumed at different levels of granularity. 
@@ -15,7 +13,7 @@
     $+$ is a commutative and associative operator with identity  \( 0 \), and $\cdot$ is a commutative and associative operator  with identity  \( 1 \)  
     distributive over $+$ [REFS].
     A provenance token is a unique identifier that represents a source tuple in the input dataset.
-    The semiring addition operator ($+$) represents alternative derivations of a tuple, while the multiplication operator ($\cdot$) represents joint 
+    The semiring addition operator ($+$) represents alternative derivations of a tuple, while the multiplication operator (·) represents joint 
     participation of tuples in the same derivation.
 
     For instance, when two datasets are joined, the provenance of each resulting tuple is expressed as the conjunction of the provenance annotations 
@@ -24,12 +22,46 @@
     annotations of the contributing tuples, such as $t_1 + t_2$, indicating that the tuple can be derived from multiple alternative inputs.           
     If the contributing tuples are themselves derived from other datasets, their annotations may be provenance polynomials rather than individual tokens.
 </p>
-
 <p>
     These algebraic annotations can be combined and propagated through the query evaluation process according to the semantics of the relational algebra Selection, Projection, Join and 
     Union operators, while preserving the semantics of the original query.
     Thus, the provenance of each output tuple can be expressed as a provenance polynomial that compactly encodes all possible derivations leading to that result.     
 </p>
+
+TO DELETE...<hr>
+
+<div class="example-box">
+    <p>
+        For instance, consider a company operating in two distinct sectors: industrial and commercial. 
+        Although the two sectors have been merged, parts of their data remain distributed across heterogeneous sources, such as relational databases, Parquet files, and CSV files, 
+        each with its own schema and structure.
+        
+        <h4>Unified data</h4>
+
+        <code><strong>Employees</strong>(empId, name, gender, birthdate, department, hiredDate, prov)</code> <br> 
+        <code><strong>Managers</strong>(managerId, empId, prov)</code> <br> 
+        <code><strong>Promotions</strong>(empId, date, oldPosition, newPosition, decision, decisionSource, comments)</code>
+
+        <h4>Business sector data</h4>
+        <code><strong>Business_reviews</strong>(empId, year, score, prov)</code> <br>
+        <code><strong>Manager_reviews</strong>(empId, year, score, managerId, prov)</code> <br>
+        <code><strong>Training_actions</strong>(empId, date, description, credits, prov)</code> <br>
+        The score is a value in 0...100.
+
+        <h4>industrial sector data</h4>
+
+        <code><strong>annual_reviews</strong>(empId, year, officialScore, managerScore, managerId, prov)</code> <br>
+        <code><strong>training_programs</strong>(empId, year, programs_count, credits_sum, prov)</code> <br>
+        The officialScore is also a value in 0...100, but the manager score is a letter in A, B, ..., E.
+
+        <p> 
+            Each table has a column named <code>prov</code> holding the provenance token, which serves as a unique identifier for each tuple.
+
+        </p>
+...UNTIL HERE<hr>
+
+
+</div>
 
 <p>
     Aggregation queries require a richer provenance model because the result depends not only on which tuples contributed to the computation, 
@@ -44,10 +76,11 @@
     contributed to the derivation of a data item but also how strongly they influenced aggregated features.
 </p>
 
-<!-- Two Tables Side by Side Area Wrapper Block -->
+<!-- 1. Two Tables Side by Side -->
 
-<!-- Styled Example Text -->
-<div class="example-text-styled">
+
+  <!-- Styled Example Text -->
+  <div class="example-text-styled">
     <p>
       <strong class="example-label">EXAMPLE 1:</strong> 
         Consider a company operating in two sectors: industrial and commercial. 
@@ -59,9 +92,8 @@
         In contrast, the industrial sector stores employee training information in a single table, with each employee attending only one training course per year. 
         The example datasets are as follows:
     </p>
-</div>
+  </div>
 <br>
-
 
 
 <h4>Business sector data</h4> 
@@ -229,7 +261,6 @@
     
     The remaining rows represent employees from the industrial sector, where each aggregation is given by a single source tuple.
 </p>
-</div>
 
 <!-- 2. Single Table Below (Same Width & Style) -->
 <div class="table-card single-table-card">
@@ -292,26 +323,47 @@
 
 
 
-
 <!-- 
 THE METHODS SECTION IS HERE
 -->
 
-<h3>Methods</h3>
+<h2>...Methods...</h2>
 
-
+<p>
+ 'explainables' / 'explorables' that explain how AI techniques work using visualization
+ </p>
 
 <p>
     The theoretical formalisms proposed in [REF1, REF2] have been implemented in provenance frameworks like Perm [REF], GProM [REF], 
     ProvSQL [REF] and DataProv [REF], primarily targeting database systems and query processing. 
     They follow the same underlying principles, but their notation and terminology may differ slightly.
-    These provenance representations also provide a foundation for end-to-end explainability by enabling data contributions to be traced 
-    from their sources through processing pipelines to analytical and machine learning outcomes.
+
 <p>
+  ...DISTRIBUTED QUERY ENGINES...  
+  These provenance representations also provide a foundation for end-to-end explainability by enabling data contributions to be traced 
+  from their sources through processing pipelines to analytical and machine learning outcomes.
  
-  Distributed query engines enable data to be queried and combined across heterogeneous sources without requiring all data to be centralized [REFS]. In a provenance context, they can preserve lineage across these distributed operations, enabling end-to-end tracing from original data sources to the final model inputs.
 </p>
 
+Tomando o DataProv como referência...
+Dada uma consulta, por exemplo, 'SELECT ...', contrói-se uma Abstract Syntax Tree (AST)
+A AST representa...
+Faz-se um mapeamento das cláusulas da linguagem de consulta em conjunções, disjunções e agregações, de acordo com a teoria de provenance semirings e semi-módulos.
+São adicionadas as anotações aos nós da AST.
+No final reconstroiem-se a consulta com as anotações.
+
+
+<p>
+Given a query, for example, SELECT ..., an Abstract Syntax Tree (AST) is constructed.
+
+The AST represents the syntactic structure and operations of the query, including its relations, joins, selections, projections, and aggregations.
+
+The query clauses and operators are then mapped to conjunctions, disjunctions, and aggregations, according to the theory of provenance semirings and semimodules.
+
+Provenance annotations are added to the corresponding nodes of the AST.
+
+Finally, the annotated AST is translated back into an SQL query, producing a query that carries the corresponding provenance information.
+</p>
 
 <p>
   Taking DataProv as a structural reference model, the system annotates a declarative query statement—such as SELECT ...—by first compiling its syntax tokens into a hierarchical Abstract Syntax Tree (AST) that maps out the underlying relational algebra execution plan. In accordance with the foundational theories of provenance semirings and semi-modules, the engine systematically translates these database operators into mathematical structures, mapping projections and selections to semiring multiplications, union combinations to semiring additions, and aggregate processing workflows to tensor scale modifications. Once these algebraic polynomial variables are injected directly into the corresponding AST expression nodes, the compiler performs an inverse translation rewrite to reconstruct a fully valid, synthesized target SQL statement equipped with active execution provenance instrumentation layers.
