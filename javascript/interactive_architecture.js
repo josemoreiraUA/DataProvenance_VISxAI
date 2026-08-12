@@ -16,13 +16,13 @@ FROM     Employees_training.parquet ET
 
     ast: `
         <img
-            src="/Visualization/images/AST1.png"
+            src="./images/ast1.png"
             alt="Abstract Syntax Tree">
     `,
 
     ast_prov: `
         <img
-            src="/Visualization/images/AST1_prov.png"
+            src="./images/ast1_prov.png"
             alt="Annotated Abstract Syntax Tree">
     `,
 
@@ -43,7 +43,7 @@ FROM   Employees_training.parquet ET
         </code></pre>`,
 
     system: `
-        <img src="/Visualization/images/system.png" alt="System overview" style="max-width: 80%; height: auto; display: block; margin: 0 auto;" />
+        <img src="./images/system.png" alt="System overview" style="max-width: 80%; height: auto; display: block; margin: 0 auto;" />
     `
 };
 
