@@ -1,6 +1,7 @@
 <h2>Explaining Data Pipelines</h2>
 
-Building on the previous foundations, we present two representative examples. The first is a baseline data lineage scenario, illustrating how individual output tuples produced through common operations such as selection, projection, join, union and aggregation, can be traced back to the source data that contributed to their derivation. The second case introduces a root-cause analysis for an employee promotion prediction model. It puts in evidence how intermediate data outside the training dataset can quietly condition model results, and how provenance polynomials allow to trace the underlying pathways through diverse perspectives, namely the data and the pipeline methods themselves. This provides the means to analyze the upstream data preparation to detect fairness anomalies that favor or prejudice specific employee groups, and isolate their root causes.  While algebraic annotations precisely capture data dependencies, they can become hard to interpret in large datasets or complex pipelines. To overcome this, we complement our algebraic representation with graphical visualizations, making data derivation paths and their underlying dependencies easier to understand. Importantly, the provenance-based analysis is model agnostic, remaining independent of the predictive model itself.
+Building on the previous foundations, we present two representative examples. The first is a baseline data lineage scenario, illustrating how individual output tuples produced through common operations such as selection, projection, join, union and aggregation, can be traced back to the source data that contributed to their derivation. The second case introduces a root-cause analysis for an employee promotion prediction model. It puts in evidence how intermediate data outside the training dataset can quietly condition model results, and how provenance polynomials allow to trace the underlying pathways through diverse perspectives, namely the data and the pipeline methods themselves. This provides the means to analyze the upstream data preparation to detect fairness anomalies that favor or prejudice specific employee groups, and isolate their root causes.  While algebraic annotations precisely capture data dependencies, they can be hard to interpret in large datasets or complex pipelines. 
+To overcome this, we combine algebraic representations with graphical visualizations, making data derivation paths and their underlying dependencies easier to understand. Importantly, the provenance-based analysis is model agnostic, remaining independent of the predictive model itself.
 
 
 <h3>Data Lineage</h3>
@@ -27,11 +28,11 @@ Building on the previous foundations, we present two representative examples. Th
 
   </p>
 -->
-
+<p>
 This is a simple example to show how to identify the input tuples that contributed to a given output record, establishing a direct link between source and 
     derived data, and providing a lightweight way to trace how data flows across processing pipelines.
+</p>
 
-<br>
 <!-- HTML Structure -->
 <div class="wrapped-example-container">
   
@@ -42,7 +43,7 @@ This is a simple example to show how to identify the input tuples that contribut
   <!-- Styled Example Text -->
   <div class="example-text-styled">
     <p>
-      <strong class="example-label">EXAMPLE:</strong> 
+      <strong class="example-label">EXAMPLE 3:</strong> 
       This scenario is also based on the data structures presented in Example 1 but using datasets with a larger number of records. The source data are represented by the tables on the left side and the derived data are shown in the column on the right. One-to-one links represent the conjunction of tuples from different datasets, whereas one-to-many links represent disjunctions resulting from projections and aggregations. The provenance annotations are displayed when hovering over an output record.
     </p>
     <p>
@@ -72,7 +73,7 @@ This is a simple example to show how to identify the input tuples that contribut
 </p>
 
 <p>
-  In this example, we present a scenario related to employee performance evaluations and promotions, using the same company as in Example 1.
+  In this example, we present a scenario related to employee performance evaluations and promotions, for the company with two business sectors presented in Example 1.
 The data structures are as follows:
 </p>
 
@@ -85,39 +86,58 @@ The data structures are as follows:
   <h4>Business sector data</h4>
   <code><strong>Business_reviews</strong>(empId, year, score, prov)</code> <br>
   <code><strong>Manager_reviews</strong>(empId, year, score, managerId, prov)</code> <br>
-  <code><strong>Training_actions</strong>(empId, date, description, credits, prov)</code> <br>
+  
   The score is a value in 0...100.
+  <br>
+  
+  <h4>Industrial sector data</h4>
 
-  <h4>industrial sector data</h4>
-
-  <code><strong>annual_reviews</strong>(empId, year, officialScore, managerScore, managerId, prov)</code> <br>
-  <code><strong>training_programs</strong>(empId, year, programs_count, credits_sum, prov)</code> <br>
+  <code><strong>Annual_reviews</strong>(empId, year, officialScore, managerScore, managerId, prov)</code> <br>
+  
   The officialScore is also a value in 0...100, but the manager score is a letter in A, B, ..., E.
 
-
 <p>
-The objective is to analyze employees who were promoted and those who were not, as determined by a model, algorithm, or human decision-makers. The analysis aims to identify potential biases and disparities in promotion decisions, including differences associated with employees’ gender, department or sector of activity.
+  <br>
+  The objective is to analyze employees who were promoted and those who were not, as determined by a model, algorithm or human decision-makers. 
+  The analysis aims to identify potential biases and disparities in promotion decisions, including differences associated with employees’ gender, department or business sector.
 
 </p>
 
+
+<p>
+
+</p>
 
 <div class="wrapped-content">
   <!-- Floated Container -->
   <div class="float-media float-right">
-    <img src="images/pipeline-diagram.png" alt="Data provenance flow" />
+    <img src="images/lineage.gif" alt="Fairness Example" />
   </div>
 
-  <!-- Paragraph Text -->
+
+  <div class="example-text-styled">
+    <p>
+      <strong class="example-label">EXAMPLE 4:</strong> 
+      This scenario is also based on the data structures presented in Example 1 but using datasets with a larger number of records. The source data are represented by the tables on the left side and the derived data are shown in the column on the right. One-to-one links represent the conjunction of tuples from different datasets, whereas one-to-many links represent disjunctions resulting from projections and aggregations. The provenance annotations are displayed when hovering over an output record.
+    </p>
   <p>
-    ... to be continued ...  
+The dataset indicates an initial distribution where 83% of the candidates were promoted and 17% were not. 
+By tracing the derivation paths linking promotion outcomes back to the source data, we observed a higher density of paths corresponding to non-promotions that 
+pass through the Annual_reviews table compared to those routed through the join of Business_reviews and Manager_reviews. 
+Building on this insight, a localized analysis reveals that 29% of the employees with evaluations in  Annual_reviews resulted in non-promotion, 
+contrasting sharply with a rejection rate of only 9% across the remaining derivation pathways. 
+While the global average across the three performance scores, namely Manager_reviews.score, Business_reviews.score, and Annual_reviews.officialScore (all normalized to a 0–100 scale), 
+remained consistent between 70 and 71/100, the discrepancy was traced to the scaling of managerScores. Specifically, the conversion mapping of letter grades (A–E) to the 100-point numerical scale introduced a systemic downward shift, pulling its specific localized average down to 63/100.
+These scores are not actually part of the promotions dataset itself, but they have been used to compute the scores that can influence the outcomes.
   </p>
+  </div>
+<br>
+
+
+  <!-- Paragraph Text -->
 </div>
 
 
-<p>
-  Moreover, provenance tracking can capture intermediate data items that do not appear in the final query result but were necessary to compute it, 
-        revealing dependencies that may also affect downstream analytics and machine learning processes.
-</p>
 
 
 
