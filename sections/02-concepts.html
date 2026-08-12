@@ -13,7 +13,7 @@
 <p>
     A provenance semiring is an algebraic structure $( \mathbb{K}, +, \cdot \, ,   0, 1)$, where $\mathbb{K}$ denotes a set of provenance tokens, 
     $+$ is a commutative and associative operator with identity  \( 0 \), and $\cdot$ is a commutative and associative operator  with identity  \( 1 \)  
-    distributive over $+$ [REFS].
+    distributive over $+$ [1].
     A provenance token is a unique identifier that represents a source tuple in the input dataset.
     The semiring addition operator ($+$) represents alternative derivations of a tuple, while the multiplication operator ($\cdot$) represents joint 
     participation of tuples in the same derivation.
@@ -38,7 +38,7 @@
     To address this limitation, provenance semirings are extended by introducing a semimodule structure defined over a semiring and a monoid ($K \otimes M$), 
     where $K$ is a commutative semiring and $M$ is a commutative monoid representing the aggregation domain. 
     For instance, the SUM aggregation  is defined over the commutative monoid $(R,+,0)$, where R is the set of real numbers, + is the addition operation and 
-    0 is its identity element [REF]. 
+    0 is its identity element [2]. 
 
     This extension preserves both the computed value and the contribution of every participating tuple, enabling understanding not only which records 
     contributed to the derivation of a data item but also how strongly they influenced aggregated features.
@@ -302,11 +302,11 @@ THE METHODS SECTION IS HERE
 
 
 <p>
-    The theoretical formalisms proposed in [REF1, REF2] have been implemented in provenance frameworks like GProM [REF], 
-    ProvSQL [REF] and DataProv [REF], primarily targeting database systems and query processing. 
+    The theoretical formalisms proposed in [3, 2] have been implemented in provenance frameworks like GProM [4], 
+    ProvSQL [5] and DataProv [6], primarily targeting database systems and query processing. 
     They follow similar underlying principles, but their notation and terminology may differ slightly.
     Complementarily, distributed query engines allow data aggregation across heterogeneous sources, including relational and NoSQL databases, parquet files, excel documents,
-    APIs among other [REFS]. 
+    APIs among other. 
     Together, they can provide a baseline for end-to-end explainability by tracing data contributions across processing pipelines in data analytics and machine learning tasks.
   </p>
 
@@ -378,7 +378,7 @@ THE METHODS SECTION IS HERE
     </p>
   </div>
 
-</div>
+
 
 
 

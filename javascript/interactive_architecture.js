@@ -43,9 +43,7 @@ FROM   Employees_training.parquet ET
         </code></pre>`,
 
     system: `
-        <img
-            src="images/system.png"
-            alt="System overview">
+        <img src="images/system.png" alt="System overview" style="max-width: 80%; height: auto; display: block; margin: 0 auto;" />
     `
 };
 
@@ -72,14 +70,14 @@ function showContent(name, button) {
 }
 
 
-
-function initializeQuery() {
-    const queryButton = document.querySelector(
-        ".content-menu button[onclick*=\"'query'\"]"
+/* Changed selector and load keys to route directly to system panel components by default */
+function initializeDefaultContent() {
+    const systemButton = document.querySelector(
+        ".content-menu button[onclick*=\"'system'\"]"
     );
 
-    if (queryButton) {
-        showContent("query", queryButton);
+    if (systemButton) {
+        showContent("system", systemButton);
         return true;
     }
 
@@ -89,13 +87,13 @@ function initializeQuery() {
 window.addEventListener("DOMContentLoaded", function () {
 
     // Try immediately
-    if (initializeQuery()) {
+    if (initializeDefaultContent()) {
         return;
     }
 
     // The content is loaded dynamically, so watch for it
     const observer = new MutationObserver(function () {
-        if (initializeQuery()) {
+        if (initializeDefaultContent()) {
             observer.disconnect();
         }
     });

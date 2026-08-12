@@ -1,55 +1,103 @@
 <h2>Explaining Data Pipelines</h2>
 
-Building on the previous foundations, we present two representative examples. The first presents a baseline data lineage scenario, illustrating how individual output tuples produced through common operations such as selection, projection, join, union and aggregation, can be traced back to the source data that contributed to their derivation. The second case introduces a root-cause analysis for an employee promotion prediction model. It puts in evidence how intermediate data outside the training dataset can quietly condition model results, and how provenance polynomials allow to trace the underlying pathways through diverse perspectives, namely the data and the pipeline methods themselves. This provides the means to analyze the upstream data preparation to detect fairness anomalies that favor or prejudice specific employee groups, and isolate their root causes.  While algebraic annotations precisely capture data dependencies, they can become hard to interpret in large datasets or complex pipelines. To overcome this, we complement our algebraic representation with graphical visualizations, making data derivation paths and their underlying dependencies easier to understand. Importantly, the provenance-based analysis is model agnostic, remaining independent of the predictive model itself.
+Building on the previous foundations, we present two representative examples. The first is a baseline data lineage scenario, illustrating how individual output tuples produced through common operations such as selection, projection, join, union and aggregation, can be traced back to the source data that contributed to their derivation. The second case introduces a root-cause analysis for an employee promotion prediction model. It puts in evidence how intermediate data outside the training dataset can quietly condition model results, and how provenance polynomials allow to trace the underlying pathways through diverse perspectives, namely the data and the pipeline methods themselves. This provides the means to analyze the upstream data preparation to detect fairness anomalies that favor or prejudice specific employee groups, and isolate their root causes.  While algebraic annotations precisely capture data dependencies, they can become hard to interpret in large datasets or complex pipelines. To overcome this, we complement our algebraic representation with graphical visualizations, making data derivation paths and their underlying dependencies easier to understand. Importantly, the provenance-based analysis is model agnostic, remaining independent of the predictive model itself.
 
 
-<h3>Lineage</h3>
+<h3>Data Lineage</h3>
 
-<p>
-    Lineage is the most basic form of data provenance. It identifies the input tuples that contributed to a given output record, 
-    establishing a direct link between source and derived data and providing a lightweight way to trace how data flows across processing pipelines. 
-    This simple representation allows the origins of a result to be traced back to its source records and makes data dependencies easier to understand.
-</p>
+<!--
+  <p>
+    Lineage is the most basic form of data provenance. It identifies the input tuples that contributed to a given output record, establishing a direct link between source and 
+    derived data, and providing a lightweight way to trace how data flows across processing pipelines. 
+    Witness-based representations offer a more expressive way to capture provenance. A witness identifies the specific combination of input tuples that jointly contribute to
+    producing a given output tuple. 
+    Both representations can be derived as special cases of the more expressive semiring- and semimodule-based provenance annotations.
+    
+    For example, consider the following polynomial:
+    
+    $t_1 \cdot a_5 \otimes 2 + t_2 \cdot a_5 \otimes 2 + t_1 \cdot a_2 \otimes 8$.
+    
+    The corresponding witnesses are the sets of tokens appearing in each monomial:
 
-<p>
-    Lineage can be captured during query execution or derived on demand from richer, fine-grained provenance representations, 
-    such as provenance polynomials or semiring annotations.
+    $ \{\{t_1, a_5\},\{t_2,a_5\},\{t_1,a_2\}\}$.
 
-    For example, in a database query joining a customer table with a transaction log, fine-grained provenance might record the exact join condition and 
-    feature scalings applied ($t_1 \cdot t_2$).
-    In contrast, lineage simplifies this result into the minimal source set specifying simply that output record $R_1$ was 
-    derived from Customer tuple $C_{104}$ and Transaction tuple $T_{892}$.
-</p>
+    Lineage can then be derived directly from the witnesses by taking their union:
+
+    $\{t_1,t_2,a_2,a_5\}$.
+
+  </p>
+-->
+
+This is a simple example to show how to identify the input tuples that contributed to a given output record, establishing a direct link between source and 
+    derived data, and providing a lightweight way to trace how data flows across processing pipelines.
 
 <br>
 <!-- HTML Structure -->
 <div class="wrapped-example-container">
   
   <figure class="float-media float-left">
-    <img src="images/pipeline-diagram.png" alt="Data lineage diagram" />
+    <img src="images/lineage.gif" alt="Data lineage webapp" />
   </figure>
 
   <!-- Styled Example Text -->
   <div class="example-text-styled">
     <p>
       <strong class="example-label">EXAMPLE:</strong> 
-        This simple representation makes it possible to trace the origins of query results or datasets used for data analytics and machine learning. 
-        It allows users to identify which data items contributed to a particular result and, conversely, to determine which results were influenced by a given source. 
-        For example, it can be used to identify the training courses that contributed to the most popular courses in a dataset. 
-        Moreover, provenance tracking can capture intermediate data items that do not appear in the final query result but were necessary to compute it, 
-        revealing dependencies that may also affect downstream analytics and machine learning processes.
-        Furthermore, it tracks intermediate data that, while absent from final outputs, remains critical for 
-        calculations and downstream machine learning workflows.        
+      This scenario is also based on the data structures presented in Example 1 but using datasets with a larger number of records. The source data are represented by the tables on the left side and the derived data are shown in the column on the right. One-to-one links represent the conjunction of tuples from different datasets, whereas one-to-many links represent disjunctions resulting from projections and aggregations. The provenance annotations are displayed when hovering over an output record.
+    </p>
+    <p>
+      The visual representation of data derivations supports an exploratory analysis of data provenance traces. 
+      It facilitates the discovery of contribution patterns, dependencies and influential source tuples that may be difficult to identify by inspecting provenance annotations alone. 
+      For instance, selecting an output tuple allows users to find the corresponding training actions or programs that contributed to its derivation, as well as the 
+      underlying datasets. 
+      Conversely, selecting a training action makes it easy to identify which employees performed it. 
+      The visual analysis of the data also provides a quick overview of the most popular training programs.
+      Beyond exploratory use, the annotated datasets also provide a reliable basis for machine learning, allowing provenance relationships to be explored throughout model development, evaluation, and explainability.
     </p>
   </div>
 <br>
 </div>
+
+
+
+
+
+<h3>Fairness and trustworthiness</h3>
 
 <p>
     While lineage identifies which source tuples contributed to a result, provenance polynomials provide a richer explanation of how and why those tuples 
     contributed by capturing the structure of their derivations, including alternative and joint contributions. 
     For aggregate queries, semimodule annotations further associate each contributing tuple with the value it contributes to the aggregate, 
     making it possible to determine not only which tuples influenced the result, but also how their individual values contributed to the final aggregate.
+</p>
+
+<p>
+  In this example, we present a scenario related to employee performance evaluations and promotions, using the same company as in Example 1.
+The data structures are as follows:
+</p>
+
+  <h4>Unified data</h4>
+
+  <code><strong>Employees</strong>(empId, name, gender, birthdate, department, hiredDate, prov)</code> <br> 
+  <code><strong>Managers</strong>(managerId, empId, prov)</code> <br> 
+  <code><strong>Promotions</strong>(empId, date, oldPosition, newPosition, decision, decisionSource, comments)</code>
+
+  <h4>Business sector data</h4>
+  <code><strong>Business_reviews</strong>(empId, year, score, prov)</code> <br>
+  <code><strong>Manager_reviews</strong>(empId, year, score, managerId, prov)</code> <br>
+  <code><strong>Training_actions</strong>(empId, date, description, credits, prov)</code> <br>
+  The score is a value in 0...100.
+
+  <h4>industrial sector data</h4>
+
+  <code><strong>annual_reviews</strong>(empId, year, officialScore, managerScore, managerId, prov)</code> <br>
+  <code><strong>training_programs</strong>(empId, year, programs_count, credits_sum, prov)</code> <br>
+  The officialScore is also a value in 0...100, but the manager score is a letter in A, B, ..., E.
+
+
+<p>
+The objective is to analyze employees who were promoted and those who were not, as determined by a model, algorithm, or human decision-makers. The analysis aims to identify potential biases and disparities in promotion decisions, including differences associated with employees’ gender, department or sector of activity.
+
 </p>
 
 
@@ -65,27 +113,11 @@ Building on the previous foundations, we present two representative examples. Th
   </p>
 </div>
 
-<h3>Fairness and trustworthiness</h3>
 
 <p>
-    While lineage identifies which source tuples contributed to a result, provenance polynomials 
-    provide a richer explanation of how and why those tuples contributed by capturing the structure 
-    of their derivations, including alternative and joint combinations...
+  Moreover, provenance tracking can capture intermediate data items that do not appear in the final query result but were necessary to compute it, 
+        revealing dependencies that may also affect downstream analytics and machine learning processes.
 </p>
-
-providing an auditable, transparent record of a dataset's origin, transformation history, and computational dependencies. By revealing exactly which raw inputs, preprocessing steps, or synthetic data shaped a model, provenance helps teams detect and rectify demographic biases and historical imbalances at their root—a critical requirement for fairness. Furthermore, this end-to-end traceability establishes trustworthiness, allowing stakeholders, auditors, and end-users to verify data authenticity, rule out dynamic data poisoning, and confidently evaluate the validity of model outputs.
-
-<h3>Debugging  and Influence functions </h3>
-
-<p>
-A concrete example is to detect whether employees are effectively evaluating themselves in a promotion prediction pipeline. For instance, an employee’s performance record may be used both as an input to the training data and, directly or through intermediate transformations, as the basis for the target or evaluation features. Techniques such as influence functions can help quantify how much a specific training record affects a model prediction, answering questions such as: How much would this prediction change if a particular training record were removed or slightly modified? This can help identify erroneous or suspicious predictions, mislabeled data, data poisoning, and records with disproportionate influence.
-</p>
-
-<p>
-Influence functions complement, rather than replace, relational data provenance. While provenance polynomials precisely trace which source records and operations produced a data item, influence functions capture the continuous statistical or gradient-based impact of training records on model outputs. Combining both perspectives can therefore connect an anomalous prediction to its upstream data lineage while also quantifying how strongly individual records influenced the model's decision.
-</p>
-
-See my additional notes and include the visual example.
 
 
 

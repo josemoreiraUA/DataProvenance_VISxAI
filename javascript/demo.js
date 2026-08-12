@@ -25,3 +25,27 @@ function updateSample(key, btn) {
     document.getElementById('val-log').textContent = data.log;
   }
 }
+
+
+
+document.addEventListener("DOMContentLoaded", async function() {
+    try {
+        const ackResponse = await fetch('acknowledgements.html');
+        if (ackResponse.ok) {
+            const ackContainer = document.getElementById('acknowledgements-container');
+            if (ackContainer) {
+                ackContainer.innerHTML = await ackResponse.text();
+            }
+        }
+
+        const refResponse = await fetch('references.html');
+        if (refResponse.ok) {
+            const refContainer = document.getElementById('references-container');
+            if (refContainer) {
+                refContainer.innerHTML = await refResponse.text();
+            }
+        }
+    } catch (err) {
+        console.error("Error reading the local include asset files:", err);
+    }
+});
