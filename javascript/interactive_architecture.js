@@ -16,13 +16,13 @@ FROM     Employees_training.parquet ET
 
     ast: `
         <img
-            src="/Visualization/images/ast1.png"
+            src="/Visualization/images/AST1.png"
             alt="Abstract Syntax Tree">
     `,
 
     ast_prov: `
         <img
-            src="/Visualization/images/ast1_prov.png"
+            src="/Visualization/images/AST1_prov.png"
             alt="Annotated Abstract Syntax Tree">
     `,
 
